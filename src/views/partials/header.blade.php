@@ -11,7 +11,7 @@
             <ul class="navbar-nav ml-auto">
                 
                 <li class="nav-item">
-                    <a class="nav-link text-light" href="#">V 1.0-Alpha</a>
+                    <a class="nav-link text-light" href="#">V {{ $crudgen->cur_version }}</a>
                 </li>
                 <li class="nav-item">
                 <a class="nav-link text-white" href="#"><i class="fab fa-github"></i></a>

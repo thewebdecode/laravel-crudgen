@@ -25,7 +25,7 @@ class CrudgenController extends Controller
     public function index(Request $request)
     {
         $data['request'] = $request;
-        $data['update'] = $this->checkForUpdates();
+        $data['crudgen'] = $this->checkForUpdates();
         return view('laravel-crudgen::index', $data);
     }
 

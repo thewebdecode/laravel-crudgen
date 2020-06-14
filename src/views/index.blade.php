@@ -34,12 +34,12 @@
                     {{ session()->get('error') }}
                 </div>
             @endif
-            @if ($update->status == 'ok' && session()->has('checked_updates'))
+            @if ($crudgen->status == 'ok' && !session()->has('checked_updates'))
                 <div class="alert alert-success rounded-0" id="updatePopup">
                     <a href="javascript:void(0)" id="checkedUpdates" class="btn btn-danger btn-sm float-right">X</a>
-                    <h4>{{ ucfirst($update->message) }}</h4>
-                    <p class="m-0">There is a new version available V {{ $update->new_version }}</p>
-                    <p class="m-0">Update from V {{ $update->cur_version }} => V {{ $update->new_version }} <a href="{{ $update->url }}" target="_blank">Update Now <i class="fas fa-external-link-alt"></i></a></p>
+                    <h4>{{ ucfirst($crudgen->message) }}</h4>
+                    <p class="m-0">There is a new version available V {{ $crudgen->new_version }}</p>
+                    <p class="m-0">Update from V {{ $crudgen->cur_version }} => V {{ $crudgen->new_version }} <a href="{{ $crudgen->url }}" target="_blank">Update Now <i class="fas fa-external-link-alt"></i></a></p>
                 </div>
             @endif
 

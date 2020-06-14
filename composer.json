@@ -1,0 +1,28 @@
+{
+    "name": "thewebdecode/laravel-crudgen",
+    "description": "A simple yet powerful package to generate crud for your laravel project.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shoaib Khan",
+            "email": "contact@webdecode.in"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "guzzlehttp/guzzle": "^7.0@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Thewebdecode\\Crudgen\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Thewebdecode\\Crudgen\\CrudgenServiceProvider"
+            ]
+        }
+    }
+}

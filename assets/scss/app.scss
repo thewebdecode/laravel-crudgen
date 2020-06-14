@@ -1,0 +1,15 @@
+@import "./variables";
+
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+*,*:focus {
+    outline: none !important;
+}
+button,.btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+a, a:hover{
+    text-decoration: none !important;
+}

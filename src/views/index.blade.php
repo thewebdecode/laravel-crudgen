@@ -38,8 +38,8 @@
                 <div class="alert alert-success rounded-0" id="updatePopup">
                     <a href="javascript:void(0)" id="checkedUpdates" class="btn btn-danger btn-sm float-right">X</a>
                     <h4>{{ ucfirst($crudgen->message) }}</h4>
-                    <p class="m-0">There is a new version available V {{ $crudgen->new_version }}</p>
-                    <p class="m-0">Update from V {{ $crudgen->cur_version }} => V {{ $crudgen->new_version }} <a href="{{ $crudgen->url }}" target="_blank">Update Now <i class="fas fa-external-link-alt"></i></a></p>
+                    <p class="m-0">There is a new version available <b>v{{ $crudgen->new_version }}</b></p>
+                    <p class="m-0">Update from <b>v{{ $crudgen->cur_version }}</b> => <b>v{{ $crudgen->new_version }}</b> <a href="{{ $crudgen->url }}" target="_blank" class="ml-3">Update Now <i class="fas fa-external-link-alt"></i></a></p>
                 </div>
             @endif
 
@@ -62,48 +62,61 @@
                                 <h4 class="card-title m-0">Routes Setup</h4>
                             </div>
                             <div class="card-body">
-                                <div class="form-group">
-                                    <label for="route_prefix">Routes <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="route_prefix" value="{{ old('route_prefix') }}" name="route_prefix" placeholder="Route URL*" required>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="route_prefix">Routes <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="route_prefix" value="{{ old('route_prefix') }}" name="route_prefix" placeholder="Route URL*" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="route_file">Routes File (Default: web.php) </label> <small class="text-danger">Please note routes file must be in routes directory !</small>
+                                            <input type="text" class="form-control" id="route_file" value="{{ old('route_file') ?? 'web.php' }}" name="route_file" placeholder="Route File">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="card mt-3">
                             <div class="card-header">
-                                <h4 class="card-title m-0">Define Directories (Default: laravel's default) <button type="button" class="btn p-1" data-toggle="tooltip" title="Define your required directory name for the controller model and views where you want to put them." style="cursor: normal; box-shadow: none"><i class="fas fa-question-circle text-info"></i></button></h4>
+                                <h4 class="card-title m-0">Views Setup</h4>
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-4">
-                                        <div class="form-group">
-                                            <label for="controller_dir">Directory for controller </label>
-                                            <input type="text" class="form-control" id="controller_dir" value="{{ session()->has('controller_dir') ? session()->get('controller_dir') : '' }}" name="controller_dir" placeholder="Directory for controller">
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="form-group">
-                                            <label for="model_dir">Directory for model </label>
-                                            <input type="text" class="form-control" id="model_dir" value="{{ session()->has('model_dir') ? session()->get('model_dir') : '' }}" name="model_dir" placeholder="Directory for model">
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="views_dir">Directory for views </label>
-                                            <input type="text" class="form-control" id="views_dir" value="{{ old('views_dir') }}" name="views_dir" placeholder="Directory for views">
+                                            <input type="text" class="form-control" id="views_dir" value="{{ session()->has('views_dir') ? session()->get('views_dir') : '' }}" name="views_dir" placeholder="Directory for views">
+                                            <small id="views_dir_info"></small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="layout">Views Layout to extend (Default: layouts.app) </label>
+                                            <input type="text" class="form-control" id="layout" value="{{ old('layout') ?? 'layouts.app' }}" name="layout" placeholder="Views Layout to extend">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="card mt-3">
-                                    <div class="card-header">
-                                        <h4 class="card-title m-0">Controller Setup</h4>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h4 class="card-title m-0">Controller Setup</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="controller_dir">Directory for controller </label>
+                                            <input type="text" class="form-control" id="controller_dir" value="{{ session()->has('controller_dir') ? session()->get('controller_dir') : '' }}" name="controller_dir" placeholder="Directory for controller">
+                                            <small id="controller_dir_info"></small>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="controller_name">Controller Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="controller_name" value="{{ old('controller_name') }}" name="controller_name" placeholder="Controller Name*" required>
@@ -111,12 +124,22 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="card mt-3">
-                                    <div class="card-header">
-                                        <h4 class="card-title m-0">Model Setup</h4>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h4 class="card-title m-0">Model Setup</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="model_dir">Directory for model </label>
+                                            <input type="text" class="form-control" id="model_dir" value="{{ session()->has('model_dir') ? session()->get('model_dir') : '' }}" name="model_dir" placeholder="Directory for model">
+                                            <small id="model_dir_info"></small>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="model_name">Model Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="model_name" value="{{ old('model_name') }}" name="model_name" placeholder="Model Name*" required>
@@ -125,11 +148,9 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-12">
-                            <div class="form-group mt-3 text-right">
-                                <button type="button" class="btn btn-primary" id="next" data-target="second-tab">Next &raquo;</button>
-                            </div>
+                    
+                        <div class="form-group mt-3 text-right">
+                            <button type="button" class="btn btn-primary" id="next" data-target="second-tab">Next &raquo;</button>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
@@ -141,6 +162,24 @@
                     </div>  
                 </div>
             </form>
+            <div>
+                <b class="text-danger">Note:</b> 
+                <ol type="i">
+                    <li>
+                        <code class="badge badge-light text-danger">id</code> and <code class="badge badge-light text-danger">timestamps</code> will be created automaticaly.
+                    </li>
+                    <li>
+                        Use lowercase for the <code class="badge badge-light text-danger">Column names</code>.
+                    </li>
+                    <li>
+                        For routes file, file must be in the routes directory (Not in sub directory).
+                    </li>
+                    <li>
+                        For routes file, if file not be found then <code class="badge badge-light text-danger">web.php</code> file will be edited.
+                    </li>
+                </ol>
+            </div>
+            
         </div> <!-- /. container ends here -->
 
     
@@ -163,7 +202,7 @@
                 .catch(err => console.error(err));
         });
 
-        $('[data-toggle="tooltip"]').tooltip();
+        
 
         let i = 1;
         
@@ -206,8 +245,8 @@
                         </select>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-info rounded-circle addMoreCols"><i class="fas fa-plus"></i></button>
-                        <button type="button" class="btn btn-danger rounded-circle" onclick="$(this).parent().parent().remove(); i = i - 1">X</button>
+                        <button type="button" class="btn btn-info rounded-circle addMoreCols" data-toggle="tooltip" title="Press SHIFT + > to add new row."><i class="fas fa-plus"></i></button>
+                        <button type="button" class="btn btn-danger rounded-circle removeCol" data-toggle="tooltip" title="Press SHIFT + < to remove last row." onclick="$(this).parent().parent().remove(); i = i - 1">X</button>
                     </td>
                 </tr>
             `;
@@ -216,6 +255,14 @@
 
         })
 
+        $(document).on('keypress', function (e) {
+            // console.log(e.keyCode); // 60
+            if (e.keyCode == 62) {
+                $('#addMoreCols').click();
+            } else if (e.keyCode == 60) {
+                $('#tbody tr:last-child .removeCol').click();
+            }
+        });
 
         $('#generate').on('click', function () {
             Swal.fire({
@@ -232,6 +279,59 @@
             })
         })
 
-        
+
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+
+        $('#crudForm').on('input', function () {
+            showControllerPath();
+            showViewsPath();
+            showModelPath();
+        })
+
+        function showControllerPath() {
+            if ($('#controller_dir').val() != '' || $('#controller_dir').val() != null) {
+                if ($('#controller_dir').val() == '' || $('#controller_dir').val() == null) {
+                    var con_dir = '';
+                } else {
+                    var con_dir = $('#controller_dir').val()+'/';
+                }
+                if ($('#controller_name').val() == '' || $('#controller_name').val() == null) {
+                    var con_name = '';
+                } else {
+                    var con_name = $('#controller_name').val()+'.php';
+                }
+
+                $('#controller_dir_info').html('<span class="text-success" style="font-weight: bold;">PROJECT_PATH/app/Http/Controllers/'+con_dir+con_name+'</span>')
+            }
+        }
+        function showModelPath() {
+            if ($('#model_dir').val() != '' || $('#model_dir').val() != null) {
+                if ($('#model_dir').val() == '' || $('#model_dir').val() == null) {
+                    var mod_dir = '';
+                } else {
+                    var mod_dir = $('#model_dir').val()+'/';
+                }
+                if ($('#model_name').val() == '' || $('#model_name').val() == null) {
+                    var mod_name = '';
+                } else {
+                    var mod_name = $('#model_name').val()+'.php';
+                }
+                $('#model_dir_info').html('<span class="text-success" style="font-weight: bold;">PROJECT_PATH/app/'+mod_dir+mod_name+'</span>')
+            }
+        }
+        function showViewsPath() {
+            if ($('#views_dir').val() != '' || $('#views_dir').val() != null) {
+                if ($('#views_dir').val() == '' || $('#views_dir').val() == null) {
+                    var views_dir = '';
+                } else {
+                    var views_dir = $('#views_dir').val()+'/';
+                }
+                $('#views_dir_info').html('<span class="text-success" style="font-weight: bold;">PROJECT_PATH/resources/views/'+views_dir+$('#route_prefix').val()+'</span>')
+            }
+        }
+
+
     </script>
 @endsection

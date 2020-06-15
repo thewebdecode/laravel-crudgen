@@ -1,3 +1,4 @@
 {
-    "version": "1.0-alpha"
+    "version": "@Dev",
+    "package_url": "https://packages.webdecode.in/api/laravel-crudgen"
 }

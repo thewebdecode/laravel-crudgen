@@ -15,7 +15,7 @@ class {{ $controllerName }} extends Controller
     public function index()
     {
         $data['{{ Illuminate\Support\Str::plural(strtolower($modelName)) }}'] = {{ ucfirst($modelName) }}::get();
-        return view('{{ $viewsDir }}.index', $data);
+        return view('{{ $viewsDirFull }}.index', $data);
     }
 
     /**
@@ -25,7 +25,7 @@ class {{ $controllerName }} extends Controller
      */
     public function create()
     {
-        //
+        return view('{{ $viewsDirFull }}.create');
     }
 
     /**
@@ -36,7 +36,30 @@ class {{ $controllerName }} extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+@foreach ($column_name as $index => $col_name)
+@if (($col_name != null || $col_name != '') && $column_null[$index] == 0)
+@php if($index != (count($column_name) - 1)){$comma = ',';}else{$comma = '';}@endphp
+            '{{ $col_name }}' => 'required'{{ $comma }}
+@endif
+@endforeach
+        ]);
+
+        $res = {{ ucfirst($modelName) }}::create([
+@foreach($column_name as $index => $col_name)
+@if (($col_name != null || $col_name != '') && $column_null[$index] == 0)
+@php if($index != (count($column_name) - 1)){$comma = ',';}else{$comma = '';}@endphp
+            '{{ $col_name }}' => $request->{{ $col_name }}{{ $comma }}
+@endif
+@endforeach
+        ]);
+
+        if($res){
+            return back()->withSuccess('Record created successfully !');
+        } else {
+            return back()->withAlert('Thre was a problem creating this record !');
+        }
+
     }
 
     /**
@@ -47,7 +70,8 @@ class {{ $controllerName }} extends Controller
      */
     public function show($id)
     {
-        //
+        $data['{{ Illuminate\Support\Str::singular(strtolower($modelName)) }}'] = {{ ucfirst($modelName) }}::whereId($id)->first();
+        return view('{{ $viewsDirFull }}.show', $data);
     }
 
     /**
@@ -58,7 +82,8 @@ class {{ $controllerName }} extends Controller
      */
     public function edit($id)
     {
-        //
+        $data['{{ Illuminate\Support\Str::singular(strtolower($modelName)) }}'] = {{ ucfirst($modelName) }}::whereId($id)->first();
+        return view('{{ $viewsDirFull }}.edit', $data);
     }
 
     /**
@@ -70,7 +95,29 @@ class {{ $controllerName }} extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+@foreach ($column_name as $index => $col_name)
+@if (($col_name != null || $col_name != '') && $column_null[$index] == 0)
+@php if($index != (count($column_name) - 1)){$comma = ',';}else{$comma = '';}@endphp
+            '{{ $col_name }}' => 'required'{{ $comma }}
+@endif
+@endforeach
+        ]);
+
+        $res = {{ ucfirst($modelName) }}::whereId($id)->update([
+@foreach($column_name as $index => $col_name)
+@if (($col_name != null || $col_name != '') && $column_null[$index] == 0)
+@php if($index != (count($column_name) - 1)){$comma = ',';}else{$comma = '';}@endphp
+            '{{ $col_name }}' => $request->{{ $col_name }}{{ $comma }}
+@endif
+@endforeach
+        ]);
+
+        if($res){
+            return back()->withSuccess('Record updated successfully !');
+        } else {
+            return back()->withAlert('Thre was a problem updating this record !');
+        }
     }
 
     /**
@@ -81,7 +128,12 @@ class {{ $controllerName }} extends Controller
      */
     public function destroy($id)
     {
-        //
+        $res = {{ ucfirst($modelName) }}::whereId($id)->first()->delete();
+        if($res){
+            return back()->withSuccess('Record deleted successfully !');
+        } else {
+            return back()->withAlert('Thre was a problem deleting this record !');
+        }
     }
 
 }

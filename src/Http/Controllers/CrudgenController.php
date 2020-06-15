@@ -43,13 +43,13 @@ class CrudgenController extends Controller
 
         // Prepare data for the files
         $data['controllerName'] = $request->controller_name;
-        $data['modelName'] = $request->model_name;
+        $data['modelName'] = ucfirst($request->model_name);
         $data['column_name'] = $request->column_name;
         $data['column_type'] = $request->column_type;
         $data['column_default'] = $request->column_default;
         $data['column_null'] = $request->column_null;
         $data['column_unsigned'] = $request->column_unsigned;
-        $data['route_prefix'] = $request->route_prefix;
+        $data['route_prefix'] = strtolower($request->route_prefix);
         $data['phpInit'] = '?php';
         $data['echoStarter'] = '{{';
 
@@ -58,19 +58,37 @@ class CrudgenController extends Controller
         // Set session for the Directories to fillit automatically
         if ($request->controller_dir) {
             session()->put('controller_dir', $request->controller_dir);
+        } else {
+            if (session()->has('controller_dir')) {
+                session()->forget('controller_dir');
+            }
         }
         if ($request->model_dir) {
             session()->put('model_dir', $request->model_dir);
+        } else {
+            if (session()->has('model_dir')) {
+                session()->forget('model_dir');
+            }
+        }
+        if ($request->views_dir) {
+            session()->put('views_dir', $request->views_dir);
+        } else {
+            if (session()->has('views_dir')) {
+                session()->forget('views_dir');
+            }
         }
 
         // Check if user set any directory
         $contollerDir = $request->controller_dir ?? null;
         $modelDir = $request->model_dir ?? null;
-        $viewsDir = $request->views_dir ? $request->views_dir.'/'.$request->route_prefix : $request->route_prefix;
-        $viewsDir = str_replace('/', '.', $viewsDir);
+
+        $viewsDir = strtolower($request->route_prefix);
+        $viewsDirPre = $request->views_dir ? strtolower($request->views_dir).'/' : '';
+
+
         $data['contollerDir'] = $contollerDir;
-        $data['modelDir'] = $modelDir;  
-        $data['viewsDir'] = str_replace('/', '.', $viewsDir);
+        $data['modelDir'] = $modelDir;
+        $data['viewsDirFull'] = $request->views_dir ? str_replace('/', '.', $request->views_dir).'.'.$viewsDir : $viewsDir;
 
 
         // Check if selected direcotories are avlaible or not / Create directories
@@ -110,10 +128,10 @@ class CrudgenController extends Controller
         
         // Put Views files
         if ($viewsDir !== null) {
-            File::put(base_path('resources/views/'.$viewsDir.'/index.blade.php'), view('laravel-crudgen::inc.index', $data));
-            File::put(base_path('resources/views/'.$viewsDir.'/create.blade.php'), view('laravel-crudgen::inc.create', $data));
-            File::put(base_path('resources/views/'.$viewsDir.'/show.blade.php'), view('laravel-crudgen::inc.show', $data));
-            File::put(base_path('resources/views/'.$viewsDir.'/edit.blade.php'), view('laravel-crudgen::inc.edit', $data));
+            File::put(base_path('resources/views/'.$viewsDirPre.$viewsDir.'/index.blade.php'), view('laravel-crudgen::inc.index', $data));
+            File::put(base_path('resources/views/'.$viewsDirPre.$viewsDir.'/create.blade.php'), view('laravel-crudgen::inc.create', $data));
+            File::put(base_path('resources/views/'.$viewsDirPre.$viewsDir.'/show.blade.php'), view('laravel-crudgen::inc.show', $data));
+            File::put(base_path('resources/views/'.$viewsDirPre.$viewsDir.'/edit.blade.php'), view('laravel-crudgen::inc.edit', $data));
         }
 
         // Put Views files

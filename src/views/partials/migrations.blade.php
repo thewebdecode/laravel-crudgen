@@ -53,16 +53,5 @@
     </tbody>
 </table>
 
-<div>
-    <b class="text-danger">Note:</b> 
-    <ol type="i">
-        <li>
-            <code class="badge badge-light text-danger">id</code> and <code class="badge badge-light text-danger">timestamps</code> will be created automaticaly.
-        </li>
-        <li>
-            Use lowercase for the <code class="badge badge-light text-danger">Column names</code>.
-        </li>
-    </ol>
-</div>
 
 

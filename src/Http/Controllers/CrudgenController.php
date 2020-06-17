@@ -1,8 +1,6 @@
 <?php
 
 namespace Thewebdecode\Crudgen\Http\Controllers;
-
-use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;

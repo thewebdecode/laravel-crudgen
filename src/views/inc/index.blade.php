@@ -1,5 +1,6 @@
-@php echo "@extends('layouts.app')\n\n"; @endphp
-@php echo "@section('title', 'title')\n"; @endphp
+@php if($layout != '' || $layout != null){$template = $layout;}else{$template = 'layouts.app';} @endphp
+@php echo "@extends('".$template."')\n\n"; @endphp
+@php echo "@section('title', 'Manage all ".ucfirst(Illuminate\Support\Str::plural(strtolower($modelName)))."')\n"; @endphp
 
 @php echo "@section('scopedCss')\n"; @endphp
     {{ $echoStarter }}-- Styles for this page only --}}
@@ -23,7 +24,7 @@
                 </tr>
             </thead>
             <tbody>
-                @php echo "@forelse($".Illuminate\Support\Str::plural(strtolower($modelName))." as $"."index => $".Illuminate\Support\Str::singular(strtolower($modelName)).")\n";@endphp
+                @php echo "@forelse($".Illuminate\Support\Str::plural(strtolower($modelName))." as \$index => $".Illuminate\Support\Str::singular(strtolower($modelName)).")\n";@endphp
                     <tr>
                         <td>{{ $echoStarter }}@php echo '++$index }}';@endphp</td>
 @foreach ($column_name as $key => $col_name)
@@ -32,14 +33,18 @@
 @endif
 @endforeach
                         <td>
-                            <a href="#" class="btn btn-primary btn-sm">Edit</a>
-                            <a href="#" class="btn btn-info btn-sm">View</a>
-                            <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                            <a href="{{ $echoStarter }} route('{{ Illuminate\Support\Str::plural(strtolower($modelName)) }}.edit', ${{ Illuminate\Support\Str::singular(strtolower($modelName)) }}->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                            <a href="{{ $echoStarter }} route('{{ Illuminate\Support\Str::plural(strtolower($modelName)) }}.show', ${{ Illuminate\Support\Str::singular(strtolower($modelName)) }}->id) }}" class="btn btn-info btn-sm">View</a>
+                            <form class="form-inline" action="{{ $echoStarter }} route('{{ Illuminate\Support\Str::plural(strtolower($modelName)) }}.destroy', ${{ Illuminate\Support\Str::singular(strtolower($modelName)) }}->id) }}">
+                                @@csrf
+                                @@method("DELETE")
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
                         </td>
                     </tr>
                 @php echo "@empty\n"; @endphp
                     <tr>
-                        <td colspan="{{ count($column_name) + 1 }}"><h3>No data available !</h3></td>
+                        <td colspan="{{ count($column_name) + 2 }}"><h3>No data available !</h3></td>
                     </tr>
                 @php echo "@endforelse\n"; @endphp
             </tbody>

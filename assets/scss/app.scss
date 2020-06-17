@@ -13,3 +13,8 @@ button,.btn:focus {
 a, a:hover{
     text-decoration: none !important;
 }
+
+::selection{
+    background: $primary;
+    color: #efefef;
+}

@@ -21,19 +21,6 @@
                     </div>
                 @endforeach
             @endif
-            @if (session()->has('success'))
-                <div class="alert alert-success">
-                    {{ session()->get('success') }}
-                </div>
-            @elseif(session()->has('alert'))
-                <div class="alert alert-danger">
-                    {{ session()->get('alert') }}
-                </div>
-            @elseif(session()->has('error'))
-                <div class="alert alert-danger">
-                    {{ session()->get('error') }}
-                </div>
-            @endif
             @if ($crudgen->status == 'ok' && !session()->has('checked_updates'))
                 <div class="alert alert-success rounded-0" id="updatePopup">
                     <a href="javascript:void(0)" id="checkedUpdates" class="btn btn-danger btn-sm float-right">X</a>
@@ -43,142 +30,194 @@
                 </div>
             @endif
 
-            <form action="{{ route('crudgen.generate') }}" method="POST" id="crudForm">
-                {{ csrf_field() }}
-                <nav>
-                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link active" id="first-tab" data-toggle="tab" href="#first-tab-content" role="tab" aria-controls="first-tab-content" aria-selected="true">
-                            Basic
-                        </a>
-                        <a class="nav-item nav-link" id="second-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">
-                            Migrations (Database table columns)
-                        </a>
-                    </div>
-                </nav>
-                <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade pb-3 show active" id="first-tab-content" role="tabpanel" aria-labelledby="first-tab">
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <h4 class="card-title m-0">Routes Setup</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="route_prefix">Routes <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="route_prefix" value="{{ old('route_prefix') }}" name="route_prefix" placeholder="Route URL*" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="route_file">Routes File (Default: web.php) </label> <small class="text-danger">Please note routes file must be in routes directory !</small>
-                                            <input type="text" class="form-control" id="route_file" value="{{ old('route_file') ?? 'web.php' }}" name="route_file" placeholder="Route File">
+            @if (!isset($status))
+                <form action="{{ route('crudgen.generate') }}" method="POST" id="crudForm">
+                    {{ csrf_field() }}
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <a class="nav-item nav-link active" id="first-tab" data-toggle="tab" href="#first-tab-content" role="tab" aria-controls="first-tab-content" aria-selected="true">
+                                Basic
+                            </a>
+                            <a class="nav-item nav-link" id="second-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">
+                                Migrations (Database table columns)
+                            </a>
+                        </div>
+                    </nav>
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade pb-3 show active" id="first-tab-content" role="tabpanel" aria-labelledby="first-tab">
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h4 class="card-title m-0">Routes Setup</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="route_prefix">Routes <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="route_prefix" value="{{ old('route_prefix') }}" name="route_prefix" placeholder="Route URL*" required>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <h4 class="card-title m-0">Views Setup</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="views_dir">Directory for views </label>
-                                            <input type="text" class="form-control" id="views_dir" value="{{ session()->has('views_dir') ? session()->get('views_dir') : '' }}" name="views_dir" placeholder="Directory for views">
-                                            <small id="views_dir_info"></small>
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h4 class="card-title m-0">Views Setup</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="views_dir">Directory for views </label>
+                                                <input type="text" class="form-control" id="views_dir" value="{{ session()->has('views_dir') ? session()->get('views_dir') : '' }}" name="views_dir" placeholder="Directory for views">
+                                                <small id="views_dir_info"></small>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="layout">Views Layout to extend (Default: layouts.app) </label>
-                                            <input type="text" class="form-control" id="layout" value="{{ old('layout') ?? 'layouts.app' }}" name="layout" placeholder="Views Layout to extend">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="layout">Views Layout to extend (Default: layouts.app) </label>
+                                                <input type="text" class="form-control" id="layout" value="{{ old('layout') ?? 'layouts.app' }}" name="layout" placeholder="Views Layout to extend">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <h4 class="card-title m-0">Controller Setup</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="controller_dir">Directory for controller </label>
-                                            <input type="text" class="form-control" id="controller_dir" value="{{ session()->has('controller_dir') ? session()->get('controller_dir') : '' }}" name="controller_dir" placeholder="Directory for controller">
-                                            <small id="controller_dir_info"></small>
+                            
+                            
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h4 class="card-title m-0">Controller Setup</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="controller_dir">Directory for controller </label>
+                                                <input type="text" class="form-control" id="controller_dir" value="{{ session()->has('controller_dir') ? session()->get('controller_dir') : '' }}" name="controller_dir" placeholder="Directory for controller">
+                                                <small id="controller_dir_info"></small>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="controller_name">Controller Name <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="controller_name" value="{{ old('controller_name') }}" name="controller_name" placeholder="Controller Name*" required>
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="controller_name">Controller Name <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="controller_name" value="{{ old('controller_name') }}" name="controller_name" placeholder="Controller Name*" required>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <h4 class="card-title m-0">Model Setup</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="model_dir">Directory for model </label>
-                                            <input type="text" class="form-control" id="model_dir" value="{{ session()->has('model_dir') ? session()->get('model_dir') : '' }}" name="model_dir" placeholder="Directory for model">
-                                            <small id="model_dir_info"></small>
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h4 class="card-title m-0">Model Setup</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="model_dir">Directory for model </label>
+                                                <input type="text" class="form-control" id="model_dir" value="{{ session()->has('model_dir') ? session()->get('model_dir') : '' }}" name="model_dir" placeholder="Directory for model">
+                                                <small id="model_dir_info"></small>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="model_name">Model Name <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="model_name" value="{{ old('model_name') }}" name="model_name" placeholder="Model Name*" required>
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="model_name">Model Name <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="model_name" value="{{ old('model_name') }}" name="model_name" placeholder="Model Name*" required>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        
+                            <div class="form-group mt-3 text-right">
+                                <button type="button" class="btn btn-primary" id="next" data-target="second-tab">Next &raquo;</button>
+                            </div>
                         </div>
-                    
-                        <div class="form-group mt-3 text-right">
-                            <button type="button" class="btn btn-primary" id="next" data-target="second-tab">Next &raquo;</button>
-                        </div>
+                        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                            @include('laravel-crudgen::partials.migrations')
+                            <div class="form-group mt-3 d-flex justify-content-between">
+                                <button type="button" class="btn btn-primary" id="prev" data-target="first-tab"> &laquo; Back</button>
+                                <button type="button" class="btn btn-primary" id="generate"> Generate <i class="fas fa-check"></i></button>
+                            </div>
+                        </div>  
                     </div>
-                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                        @include('laravel-crudgen::partials.migrations')
-                        <div class="form-group mt-3 d-flex justify-content-between">
-                            <button type="button" class="btn btn-primary" id="prev" data-target="first-tab"> &laquo; Back</button>
-                            <button type="button" class="btn btn-primary" id="generate"> Generate <i class="fas fa-check"></i></button>
-                        </div>
-                    </div>  
+                </form>
+                <div>
+                    <b class="text-danger">Note:</b> 
+                    <ol type="i">
+                        <li>
+                            <code class="badge badge-light text-danger">id</code> and <code class="badge badge-light text-danger">timestamps</code> will be created automaticaly.
+                        </li>
+                        <li>
+                            Use lowercase for the <code class="badge badge-light text-danger">Column names</code>.
+                        </li>
+                        <li>
+                            For routes file, file must be in the routes directory (Not in sub directory).
+                        </li>
+                        <li>
+                            For routes file, if file not be found then <code class="badge badge-light text-danger">web.php</code> file will be edited.
+                        </li>
+                    </ol>
                 </div>
-            </form>
-            <div>
-                <b class="text-danger">Note:</b> 
-                <ol type="i">
-                    <li>
-                        <code class="badge badge-light text-danger">id</code> and <code class="badge badge-light text-danger">timestamps</code> will be created automaticaly.
-                    </li>
-                    <li>
-                        Use lowercase for the <code class="badge badge-light text-danger">Column names</code>.
-                    </li>
-                    <li>
-                        For routes file, file must be in the routes directory (Not in sub directory).
-                    </li>
-                    <li>
-                        For routes file, if file not be found then <code class="badge badge-light text-danger">web.php</code> file will be edited.
-                    </li>
-                </ol>
-            </div>
+            @else
+                @if (session()->has('success'))
+                    <div class="alert alert-success">
+                        {{ session()->get('success') }}
+                    </div>
+                @elseif(session()->has('alert'))
+                    <div class="alert alert-danger">
+                        {{ session()->get('alert') }}
+                    </div>
+                @elseif(session()->has('error'))
+                    <div class="alert alert-danger">
+                        {{ session()->get('error') }}
+                    </div>
+                @endif
+
+                <div class="card">
+                    <div class="card-header bg-success text-light">
+                        <h3 class="card-title mb-0">Crud generated successfully !</h3>
+                    </div>
+                    <div class="card-body bg-dark text-light">
+                        <ol type="1">
+                            <li>
+                                <p class="text-light">
+                                    <b>Please copy route and put it in your <span class="px-2 py-1 rounded bg-danger text-light">web.php</span></b>
+                                </p>
+                                <blockquote class="text-light">
+                                    <b>
+                                        @if (isset($success))
+                                            <span style="font-size: 18px">
+                                                {!! $success !!}
+                                            </span>
+                                        @endif
+                                    </b>
+                                </blockquote>
+                            </li>
+                            <li>
+                                <h4>Routes Name</h4>
+                                @if (isset($routesToReturn))
+                                    @foreach ($routesToReturn as $index => $route)
+                                        <span style="font-size: 18px">{!! $route !!}</span> <br>
+                                    @endforeach
+                                @endif
+                            </li>
+                            <li>
+                                <b>Also run <span class="px-2 py-1 rounded bg-danger text-light">php artisan migrate</span></b>
+                            </li>
+                        </ol>
+                        
+                        <div class="pt-3">
+                            <b>Note: For destroy route you must use a form with <span class="px-2 py-1 rounded bg-danger text-light">DELETE</span> method.</b>
+                        </div>
+                    </div>
+                </div>
+
+            @endif
+
+            
             
         </div> <!-- /. container ends here -->
 

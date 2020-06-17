@@ -10863,4 +10863,14 @@ button, .btn:focus {
 a, a:hover {
   text-decoration: none !important;
 }
+
+::-moz-selection {
+  background: #3A5683;
+  color: #efefef;
+}
+
+::selection {
+  background: #3A5683;
+  color: #efefef;
+}
 /*# sourceMappingURL=app.css.map */

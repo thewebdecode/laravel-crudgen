@@ -25,7 +25,7 @@ class CrudgenController extends Controller
     public function index(Request $request)
     {
         $data['request'] = $request;
-        $data['crudgen'] = $this->checkForUpdates();
+        $data['crudgen'] = $this->getCrudgenInfo();
         return view('laravel-crudgen::index', $data);
     }
 
@@ -49,7 +49,8 @@ class CrudgenController extends Controller
         $data['column_default'] = $request->column_default;
         $data['column_null'] = $request->column_null;
         $data['column_unsigned'] = $request->column_unsigned;
-        $data['route_prefix'] = strtolower($request->route_prefix);
+        $data['route_prefix'] = strtolower(str_replace('-', '_', $request->route_prefix));
+        $data['layout'] = $request->layout;
         $data['phpInit'] = '?php';
         $data['echoStarter'] = '{{';
 
@@ -82,7 +83,7 @@ class CrudgenController extends Controller
         $contollerDir = $request->controller_dir ?? null;
         $modelDir = $request->model_dir ?? null;
 
-        $viewsDir = strtolower($request->route_prefix);
+        $viewsDir = $data['route_prefix'];
         $viewsDirPre = $request->views_dir ? strtolower($request->views_dir).'/' : '';
 
 
@@ -115,8 +116,10 @@ class CrudgenController extends Controller
         // Put Controller file
         if ($contollerDir !== null) {
             File::put(base_path('app/Http/Controllers/'.$contollerDir.'/'.$request->controller_name.'.php'), view('laravel-crudgen::inc.EmptyController', $data));
+            $conNameForReturn = $contollerDir.'\\'.$request->controller_name;
         } else {
             File::put(base_path('app/Http/Controllers/'.$request->controller_name.'.php'), view('laravel-crudgen::inc.EmptyController', $data));
+            $conNameForReturn = $request->controller_name;
         }
 
         // Put Model file
@@ -139,7 +142,18 @@ class CrudgenController extends Controller
             File::put(base_path('database/migrations/'.date('Y_m_d_his').'_create_'.strtolower(Str::plural($request->model_name)).'_table'.'.php'), view('laravel-crudgen::inc.empty-migration', $data));
         }
 
-        return redirect(url('crudgenerator/?status=success'))->withSuccess('Crud Generated Successfully !');
+        $success = "<span style=\"color: var(--blue)\">Route</span><span style=\"color: var(--pink)\">::</span><span style=\"color: var(--green)\">resource</span>(<span style=\"color: var(--yellow)\">'".$data['route_prefix']."'</span>, <span style=\"color: var(--yellow)\">'".$conNameForReturn."'</span>);";
+        $status = 'success';
+        $crudgen = $this->getCrudgenInfo();
+        $routesToReturn = [
+            "<span style=\"color: var(--green)\">route</span>(<span style=\"color: var(--yellow)\">'".Str::plural(strtolower($data['modelName'])).".index'</span>);",
+            "<span style=\"color: var(--green)\">route</span>(<span style=\"color: var(--yellow)\">'".Str::plural(strtolower($data['modelName'])).".create'</span>);",
+            "<span style=\"color: var(--green)\">route</span>(<span style=\"color: var(--yellow)\">'".Str::plural(strtolower($data['modelName'])).".show'</span>, $".Str::singular(strtolower($data['modelName']))."->id);",
+            "<span style=\"color: var(--green)\">route</span>(<span style=\"color: var(--yellow)\">'".Str::plural(strtolower($data['modelName'])).".edit'</span>, $".Str::singular(strtolower($data['modelName']))."->id);",
+            "<span style=\"color: var(--green)\">route</span>(<span style=\"color: var(--yellow)\">'".Str::plural(strtolower($data['modelName'])).".update'</span>, $".Str::singular(strtolower($data['modelName']))."->id);",
+            "<span style=\"color: var(--green)\">route</span>(<span style=\"color: var(--yellow)\">'".Str::plural(strtolower($data['modelName'])).".destroy'</span>, $".Str::singular(strtolower($data['modelName']))."->id);"
+        ];
+        return view('laravel-crudgen::index', compact(['success', 'status', 'crudgen', 'routesToReturn']));
 
     }
 
@@ -154,10 +168,10 @@ class CrudgenController extends Controller
 
     public function getInfo()
     {
-        return json_decode(file_get_contents(base_path('packages/laravel-crudgen/src/data/info.json')));
+        return json_decode(file_get_contents(__DIR__.'../../../data/info.json'));
     }
 
-    public function checkForUpdates()
+    public function getCrudgenInfo()
     {
         // $response = Http::get('https://jsonplaceholder.typicode.com/todos/1');
 

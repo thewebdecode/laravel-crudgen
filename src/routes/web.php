@@ -6,4 +6,4 @@
 
         // Updates are checked 
         Route::get('checked-updates', 'CrudgenController@checkedUpdates')->name('crudgen.checked-updates');
-    });
+    }); 

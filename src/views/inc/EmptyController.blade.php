@@ -1,9 +1,10 @@
 <{{ $phpInit }}
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers{{ $contollerDir != null ? '\\'.ucfirst($contollerDir) : '' }};
 
 use Illuminate\Http\Request;
 use App\{{ $modelDir ? ucfirst($modelDir).'\\' : '' }}{{ $modelName }};
+use App\Http\Controllers\Controller;
 
 class {{ $controllerName }} extends Controller
 { 
